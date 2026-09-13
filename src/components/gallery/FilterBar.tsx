@@ -1,14 +1,19 @@
 'use client';
+import { Search } from 'lucide-react';
 import { CATEGORY_LABELS, THEME_LABELS, DIFFICULTY_LABELS } from '@/types';
 import type { Category, Theme, Difficulty } from '@/types';
-export interface FilterState { category: Category | ''; theme: Theme | ''; budget: '' | 'under5k' | '5k-15k' | 'over15k'; isDIY: '' | 'true' | 'false'; difficulty: Difficulty | ''; }
+export interface FilterState { q: string; category: Category | ''; theme: Theme | ''; budget: '' | 'under5k' | '5k-15k' | 'over15k'; isDIY: '' | 'true' | 'false'; difficulty: Difficulty | ''; }
 const s = 'text-sm rounded-xl border px-3 py-1.5 appearance-none focus:outline-none transition-colors';
 const st = { backgroundColor: 'var(--card)', borderColor: 'var(--border)', color: 'var(--foreground)' };
 export default function FilterBar({ filters, onChange }: { filters: FilterState; onChange: (f: FilterState) => void }) {
   const set = <K extends keyof FilterState>(key: K, value: FilterState[K]) => onChange({ ...filters, [key]: value });
-  const active = filters.category || filters.theme || filters.budget || filters.isDIY || filters.difficulty;
+  const active = filters.q || filters.category || filters.theme || filters.budget || filters.isDIY || filters.difficulty;
   return (
     <div className='flex flex-wrap gap-2 items-center'>
+      <div className='relative'>
+        <Search className='w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2' style={{ color: 'var(--muted-foreground)' }} />
+        <input type='text' value={filters.q} onChange={e => set('q', e.target.value)} placeholder='アイデアを検索' className={`${s} pl-9 w-40 sm:w-56`} style={st} />
+      </div>
       <select value={filters.category} onChange={e => set('category', e.target.value as Category | '')} className={s} style={st}>
         <option value=''>すべてのカテゴリ</option>
         {(Object.keys(CATEGORY_LABELS) as Category[]).map(k => <option key={k} value={k}>{CATEGORY_LABELS[k]}</option>)}
@@ -27,7 +32,7 @@ export default function FilterBar({ filters, onChange }: { filters: FilterState;
         <option value=''>すべての難易度</option>
         {(Object.keys(DIFFICULTY_LABELS) as Difficulty[]).map(k => <option key={k} value={k}>{DIFFICULTY_LABELS[k]}</option>)}
       </select>
-      {active && <button onClick={() => onChange({ category: '', theme: '', budget: '', isDIY: '', difficulty: '' })} className='text-sm underline underline-offset-2 hover:opacity-70' style={{ color: 'var(--muted-foreground)' }}>リセット</button>}
+      {active && <button onClick={() => onChange({ q: '', category: '', theme: '', budget: '', isDIY: '', difficulty: '' })} className='text-sm underline underline-offset-2 hover:opacity-70' style={{ color: 'var(--muted-foreground)' }}>リセット</button>}
     </div>
   );
 }

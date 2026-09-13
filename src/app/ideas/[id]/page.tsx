@@ -1,17 +1,32 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
 import { ArrowLeft, MapPin, Wrench } from 'lucide-react';
 import { ideas } from '@/data/ideas';
 import { CATEGORY_LABELS, THEME_LABELS, DIFFICULTY_LABELS } from '@/types';
 import FavoriteButton from '@/components/idea/FavoriteButton';
 import ShareButton from '@/components/idea/ShareButton';
 import ProductLinks from '@/components/idea/ProductLinks';
+import RelatedIdeas from '@/components/idea/RelatedIdeas';
 
 const difficultyColor: Record<string, string> = { easy: '#BBF7D0', medium: '#FEF08A', hard: '#FECACA' };
 
 export async function generateStaticParams() {
   return ideas.map(idea => ({ id: idea.id }));
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  const idea = ideas.find(i => i.id === id);
+  if (!idea) return {};
+  const title = `${idea.title}｜${CATEGORY_LABELS[idea.category]}のアイデア`;
+  return {
+    title,
+    description: idea.description,
+    openGraph: { title, description: idea.description, images: [{ url: idea.image }] },
+    twitter: { card: 'summary_large_image', title, description: idea.description, images: [idea.image] },
+  };
 }
 
 export default async function IdeaPage({ params }: { params: Promise<{ id: string }> }) {
@@ -55,6 +70,7 @@ export default async function IdeaPage({ params }: { params: Promise<{ id: strin
         </div>
       )}
       <p className='text-xs' style={{ color: 'var(--muted-foreground)' }}>画像提供:{' '}{idea.credit.url ? <a href={idea.credit.url} target='_blank' rel='noopener noreferrer' className='underline'>{idea.credit.source}</a> : idea.credit.source}</p>
+      <RelatedIdeas current={idea} />
     </div>
   );
 }
