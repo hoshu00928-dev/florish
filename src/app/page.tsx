@@ -3,7 +3,7 @@ import { useState, useMemo } from 'react';
 import IdeaCard from '@/components/gallery/IdeaCard';
 import FilterBar, { type FilterState } from '@/components/gallery/FilterBar';
 import { ideas } from '@/data/ideas';
-const init: FilterState = { category: '', theme: '', budget: '', isDIY: '', difficulty: '' };
+const init: FilterState = { q: '', category: '', theme: '', budget: '', isDIY: '', difficulty: '' };
 function matchesBudget(min: number, max: number, b: FilterState['budget']) {
   if (!b) return true;
   if (b === 'under5k') return min < 5000;
@@ -14,6 +14,7 @@ function matchesBudget(min: number, max: number, b: FilterState['budget']) {
 export default function HomePage() {
   const [filters, setFilters] = useState<FilterState>(init);
   const filtered = useMemo(() => ideas.filter(idea => {
+    if (filters.q && !idea.title.toLowerCase().includes(filters.q.toLowerCase()) && !idea.items.some(item => item.toLowerCase().includes(filters.q.toLowerCase()))) return false;
     if (filters.category && idea.category !== filters.category) return false;
     if (filters.theme && !idea.themes.includes(filters.theme as never)) return false;
     if (filters.budget && !matchesBudget(idea.budget.min, idea.budget.max, filters.budget)) return false;

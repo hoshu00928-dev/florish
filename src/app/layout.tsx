@@ -2,9 +2,16 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import Header from '@/components/layout/Header';
+import { SITE_NAME, SITE_DESCRIPTION, SITE_URL } from '@/lib/site';
 const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] });
 const geistMono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin'] });
-export const metadata: Metadata = { title: 'Florish — 結婚式のアイデアを見つけよう', description: '結婚式の飾り付け・演出アイデアを探す・保存する・再現するためのWebサービス' };
+export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
+  title: { default: `${SITE_NAME} — 結婚式のアイデアを見つけよう`, template: `%s | ${SITE_NAME}` },
+  description: SITE_DESCRIPTION,
+  openGraph: { type: 'website', siteName: SITE_NAME, title: `${SITE_NAME} — 結婚式のアイデアを見つけよう`, description: SITE_DESCRIPTION, locale: 'ja_JP' },
+  twitter: { card: 'summary_large_image', title: `${SITE_NAME} — 結婚式のアイデアを見つけよう`, description: SITE_DESCRIPTION },
+};
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang='ja' className={`${geistSans.variable} ${geistMono.variable}`}>
