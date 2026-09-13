@@ -6,10 +6,9 @@ import { useFavorites } from '@/hooks/useFavorites';
 import { ideas } from '@/data/ideas';
 import IdeaCard from '@/components/gallery/IdeaCard';
 export default function FavoritesPage() {
-  const { favorites, mounted } = useFavorites();
+  const { favorites } = useFavorites();
   const [copied, setCopied] = useState(false);
   const fav = ideas.filter(i => favorites.includes(i.id));
-  if (!mounted) return null;
   return (
     <div className='max-w-6xl mx-auto px-4 py-8'>
       <Link href='/' className='inline-flex items-center gap-1.5 text-sm mb-6 hover:opacity-70' style={{ color: 'var(--muted-foreground)' }}><ArrowLeft className='w-4 h-4' />アイデア一覧へ</Link>
